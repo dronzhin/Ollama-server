@@ -1,0 +1,6 @@
+fastapi==0.115.8
+ollama==0.4.7
+openai==1.63.2
+pandas>=2.0.0
+pydantic==2.10.6
+uvicorn==0.33.0
