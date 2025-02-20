@@ -1,4 +1,3 @@
-import ollama
 from pydantic import BaseModel, Field
 import pandas as pd
 from typing import Optional
@@ -75,6 +74,6 @@ def new_llama(url: str, model: str, temp: float, content: str, image_bytes: Opti
 
 if __name__ == "__main__":
     text = 'Гемоглобин составляет 3 г/л, хотелось бы побольше, но пока так. Найти в тексте данные анализ крови. Ничего не придумывай'
-    res = new_llama(url = ollama_url, model= "llama3.2:3b", temp = 0.0, content = text)
+    res = new_llama(url = ollama_url, model= "llama3.2", temp = 0.0, content = text)
     print(res)
     print(type(res[0]))
