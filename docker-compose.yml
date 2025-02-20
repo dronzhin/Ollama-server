@@ -20,7 +20,7 @@ services:
     ports:
       - "8005:8005"
     environment:
-      - OLLAMA_BASE_URL=http://ollama:11435
+      - OLLAMA_BASE_URL=http://ollama:11434/v1
     depends_on:
       - ollama
     networks:
