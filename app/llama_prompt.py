@@ -4,11 +4,9 @@ from typing import Optional
 from openai import OpenAI
 import json
 import base64
-
+import cv2
 # Локалхост оллама
-ollama_url = "http://localhost:11435/v1"
-
-
+ollama_url = 'http://93.174.229.232:11435/v1'
 
 class BloodTest(BaseModel):
   indicator: str = Field(..., description="Название показателя анализа крови")
@@ -28,19 +26,29 @@ class BloodTestList(BaseModel):
   indicators: list[BloodTest]
 
 
-def new_llama(url: str, model: str, temp: float, content: str, image_bytes: Optional[bytes] = None):
+def new_llama(url: str, model: str, temp: float, content: str, image: Optional[str] = None):
     # Инициализация клиента для Ollama
     client = OpenAI(base_url=url, api_key="ollama")
 
     try:
-        # Формирование сообщения
-        messages = [{"role": "user", "content": content}]
 
         # Добавление изображения, если оно предоставлено
-        if image_bytes:
-            # Преобразование байтов в строку для отправки
-            image_base64 = base64.b64encode(image_bytes).decode('utf-8')
-            messages.append({"role": "user", "content": f"Изображение: data:image/jpeg;base64,{image_base64}"})
+        if image:
+            # Встраивание изображения как Markdown
+            messages=[
+                {
+                    'role': 'user',
+                    'content': [
+                        {"type": "text", "text": content},
+                        {
+                            "type": "image_url",
+                            "image_url": f"data:image/png;base64,{image}",
+                        },
+                    ],
+                }
+            ]
+        else:
+            messages = [{"role": "user", "content": content}]
 
         # Запрос к модели
         response = client.beta.chat.completions.parse(
@@ -73,7 +81,25 @@ def new_llama(url: str, model: str, temp: float, content: str, image_bytes: Opti
 
 
 if __name__ == "__main__":
+
+    # Проверка без картинки
     text = 'Гемоглобин составляет 3 г/л, хотелось бы побольше, но пока так. Найти в тексте данные анализ крови. Ничего не придумывай'
-    res = new_llama(url = ollama_url, model= "llama3.2", temp = 0.0, content = text)
+    res = new_llama(url = ollama_url, model= "llama3.2", temp = 0, content = text)
+
+    # Проверка картинки
+    text = 'Найди показатели крови и выведи их'
+
+    # Загрузка картинки
+    image_path = 'app/1.jpg'
+    image = cv2.imread(image_path)
+
+    # Кодирование изображения в указанный формат
+    success, buffer = cv2.imencode('.jpg', image)
+    if not success:
+        raise ValueError(f"Ошибка при кодировании изображения в формат .jpg")
+
+    # Преобразование в base64
+    image_base64 = base64.b64encode(buffer).decode('utf-8')
+    res = new_llama(url=ollama_url, model="llama3.2-vision", temp=0, content=text, image = image_base64)
+
     print(res)
-    print(type(res[0]))

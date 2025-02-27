@@ -1,7 +1,9 @@
 fastapi==0.115.8
-ollama==0.4.7
-openai==1.63.2
+httpx==0.28.1
+openai==1.64.0
 pandas>=2.0.0
 pydantic==2.10.6
+Requests==2.32.3
 uvicorn==0.33.0
 python-multipart==0.0.20
+opencv_python==4.11.0.86

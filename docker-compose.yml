@@ -21,6 +21,7 @@ services:
       - "8005:8005"
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434/v1
+      - OLLAMA_MODEL_URL=http://ollama:11434/api/tags
     depends_on:
       - ollama
     networks:
