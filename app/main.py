@@ -3,9 +3,19 @@ from typing import Optional
 from llama_prompt import new_llama
 import httpx
 import os
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Разрешаем запросы CORS от любого источника
+origins = ["*"]  # Для простоты можно разрешить доступ со всех источников
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for testing
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 # URL для Ollama (лучше использовать переменные окружения)
 ollama_url = os.getenv('OLLAMA_BASE_URL', "http://localhost:11435/v1")
